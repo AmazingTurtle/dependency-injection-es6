@@ -12,27 +12,27 @@ export default class Container {
         }
     }
 
-    static getInstanceOf(clazz){
+    static getInstanceOf(clazz, ...params){
         if(bindings.has(clazz)){
             clazz = bindings.get(clazz);
-            return this.resolve(clazz);
+            return this.resolve(clazz, ...params);
         }
-        return this.resolve(clazz);
+        return this.resolve(clazz, ...params);
     }
 
-    static resolve(clazz){
+    static resolve(clazz, ...params){
         if(singletons.has(clazz)) {
-            return this.resolveSingleton(clazz);
+            return this.resolveSingleton(clazz, ...params);
         }
-        return this.resolveInstance(clazz);
+        return this.resolveInstance(clazz, ...params);
 
     }
 
-    static resolveInstance(clazz){
+    static resolveInstance(clazz, ...params){
         if(typeof clazz !="function") throw new Error(`${clazz} must be class not a ${typeof clazz}`);
         let classes = clazz[DEPENDENCIES] || [];
         let dependencies = classes.map(this.getInstanceOf.bind(this));
-        return new clazz(...dependencies);
+        return new clazz(...dependencies, ...params);
     }
 
 
